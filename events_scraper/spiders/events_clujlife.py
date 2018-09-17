@@ -3,9 +3,10 @@ import scrapy
 
 from dateutil import parser
 from datetime import timedelta
+from .base_spider import BaseSpider
 
-class EventsClujlifeSpider(scrapy.Spider):
-    name = 'event-clujlife'
+class EventsClujlifeSpider(BaseSpider):
+    name = 'events-clujlife'
     allowed_domains = ['clujlife.com']
     url = 'https://www.clujlife.com/evenimente/calendar/?action=tribe_photo&tribe_paged=1&tribe_event_display=photo&tribe-bar-date='
     start_date = '2018-09-15'
@@ -14,19 +15,28 @@ class EventsClujlifeSpider(scrapy.Spider):
     def __init__(self):
         self.start_urls = [self.url + self.start_date]
 
-    def get_description(self, elem):
-        ret = ''
-        for p in elem:
-            text = p.css('::text').extract_first()
-            if text:
-                ret += text
-        return ret
+    def format_date(self, date):
+        terms = date.replace(',',' ').split()
+        year = '2018'
+        if len(terms) == 5:
+            year = terms[2]
+        month = self.RO_MONTHS.index(terms[1].lower()) + 1
+        day = terms[0]
+        if len(terms) == 2:
+            return self.format_datetime(year, month, day)
+        else:
+            time = terms[-2].split(':')
+            hours = time[0]
+            minutes = time[1]
+            if (terms[-1] == 'pm'):
+                hours = str(int(hours) + 12)
+            return self.format_datetime(year, month, day, hours, minutes)  
 
     def parse_details(self, response):
         yield {
             'name': response.css('h1.tribe-events-single-event-title::text').extract_first(),
-            'start_date': response.css('.dtstart::text').extract_first(),
-            'end_date': response.css('.dtend::text').extract_first(),
+            'startDate': self.format_date(response.css('.dtstart::text').extract_first()),
+            'endDate': self.format_date(response.css('.dtend::text').extract_first()),
             'location': response.css('.tribe-venue > a::text').extract_first(),
             'description': self.get_description(response.css('.tribe-events-content > p'))
         }
