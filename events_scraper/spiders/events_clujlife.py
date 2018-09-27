@@ -9,10 +9,10 @@ class EventsClujlifeSpider(BaseSpider):
     name = 'events-clujlife'
     allowed_domains = ['clujlife.com']
     url = 'https://www.clujlife.com/evenimente/calendar/?action=tribe_photo&tribe_paged=1&tribe_event_display=photo&tribe-bar-date='
-    start_date = '2018-09-15'
-    stop_date = '2018-09-15'
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        self.start_date = kwargs['start_date']
+        self.end_date = kwargs['end_date']
         self.start_urls = [self.url + self.start_date]
 
     def format_date(self, date):
@@ -48,6 +48,6 @@ class EventsClujlifeSpider(BaseSpider):
         date = response.url.split('=')[-1]
         base_url = '='.join(response.url.split('=')[:-1])
         new_date = (parser.parse(date) + timedelta(days=1)).strftime('%Y-%m-%d')
-        if new_date <= self.stop_date:
+        if new_date <= self.end_date:
             next_url = '{}={}'.format(base_url, new_date) 
             yield scrapy.Request(url=next_url, callback=self.parse)

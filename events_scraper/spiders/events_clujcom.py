@@ -9,10 +9,10 @@ class EventsClujComSpider(BaseSpider):
     name = 'events-clujcom'
     allowed_domains = ['cluj.com']
     url = 'https://cluj.com/evenimente/'
-    start_date = '2018-09-20'
-    end_date = '2018-09-20'
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        self.start_date = kwargs['start_date']
+        self.end_date = kwargs['end_date']
         self.start_urls = [self.url + self.start_date]
 
     def parse_details(self, response):
