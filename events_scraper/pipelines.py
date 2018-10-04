@@ -17,11 +17,21 @@ class ConstructPayload():
         item = dict(item)
         item['country'] = self.country
         item['city'] = self.city
-        item['createdBy'] = 'LnPWPpTL4biC8P4Wq' # id of razzvan.savu@gmail.com
         if len(item['location'].strip()) == 0:
             item['location'] = '-'
         if len(item['description'].strip()) == 0:
             item['description'] = '-'
+        return item
+
+class InferLabels():
+
+    keywords = {
+        'music'
+    }
+
+    def process_item(self, item, spider):
+        item = dict(item)
+
         return item
 
 class CallApi():

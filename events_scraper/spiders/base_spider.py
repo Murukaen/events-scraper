@@ -6,6 +6,11 @@ class BaseSpider(scrapy.Spider):
     RO_MONTHS = ['ianuarie', 'februarie', 'martie', 'aprilie', 'mai', 'iunie', 
         'iulie', 'august', 'septembrie', 'octombrie', 'noiembrie', 'decembrie']
 
+    def __init__(self, *args, **kwargs):
+        self.start_date = kwargs['start_date']
+        self.end_date = kwargs['end_date']
+        self.author = kwargs['author']
+
     def get_description(self, elem):
         """ Concatenate text from a list of <p> Selectors """
         ret = ''

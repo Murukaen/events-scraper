@@ -11,8 +11,7 @@ class EventsClujComSpider(BaseSpider):
     url = 'https://cluj.com/evenimente/'
 
     def __init__(self, *args, **kwargs):
-        self.start_date = kwargs['start_date']
-        self.end_date = kwargs['end_date']
+        super().__init__(*args, **kwargs)
         self.start_urls = [self.url + self.start_date]
 
     def parse_details(self, response):
@@ -42,7 +41,8 @@ class EventsClujComSpider(BaseSpider):
             'startDate': start_date_time,
             'endDate': end_date_time,
             'location': location,
-            'description': self.get_description(response.css('div.tribe-events-content > p'))
+            'description': self.get_description(response.css('div.tribe-events-content > p')),
+            'createdBy': self.author
         }
 
     def parse(self, response):

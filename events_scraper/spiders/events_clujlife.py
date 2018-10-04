@@ -11,8 +11,7 @@ class EventsClujlifeSpider(BaseSpider):
     url = 'https://www.clujlife.com/evenimente/calendar/?action=tribe_photo&tribe_paged=1&tribe_event_display=photo&tribe-bar-date='
 
     def __init__(self, *args, **kwargs):
-        self.start_date = kwargs['start_date']
-        self.end_date = kwargs['end_date']
+        super().__init__(*args, **kwargs)
         self.start_urls = [self.url + self.start_date]
 
     def format_date(self, date):
@@ -38,7 +37,8 @@ class EventsClujlifeSpider(BaseSpider):
             'startDate': self.format_date(response.css('.dtstart::text').extract_first()),
             'endDate': self.format_date(response.css('.dtend::text').extract_first()),
             'location': response.css('.tribe-venue > a::text').extract_first(),
-            'description': self.get_description(response.css('.tribe-events-content > p'))
+            'description': self.get_description(response.css('.tribe-events-content > p')),
+            'createdBy': self.author
         }
 
     def parse(self, response):
