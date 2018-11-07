@@ -3,12 +3,13 @@ import scrapy
 
 from dateutil import parser
 from datetime import timedelta
-from .base_spider import BaseSpider
+from events_scraper.spiders.romania.ro_base_spider import RoBaseSpider
 
-class EventsClujComSpider(BaseSpider):
+class EventsClujComSpider(RoBaseSpider):
     name = 'events-clujcom'
     allowed_domains = ['cluj.com']
     url = 'https://cluj.com/evenimente/'
+    city = 'Cluj-Napoca'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -31,8 +32,8 @@ class EventsClujComSpider(BaseSpider):
         else:
             [start_hours, start_minutes] = [0, 0]
             [end_hours, end_minutes] = [23, 59]
-        start_date_time = self.format_datetime(year, month, day, start_hours, start_minutes)
-        end_date_time = self.format_datetime(year, month, day, end_hours, end_minutes)
+        start_date_time = self.format_datetime_parts(year, month, day, start_hours, start_minutes)
+        end_date_time = self.format_datetime_parts(year, month, day, end_hours, end_minutes)
         location = response.css('.tribe-venue > a::text').extract_first() # can be null
         if (not location):
             location = '-'
@@ -42,7 +43,9 @@ class EventsClujComSpider(BaseSpider):
             'endDate': end_date_time,
             'location': location,
             'description': self.get_description(response.css('div.tribe-events-content > p')),
-            'createdBy': self.author
+            'createdBy': self.author,
+            'country': self.country,
+            'city': self.city
         }
 
     def parse(self, response):

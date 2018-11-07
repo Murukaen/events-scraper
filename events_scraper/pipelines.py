@@ -9,29 +9,13 @@ import json
 import urllib.request
 
 class ConstructPayload():
-
-    country = 'Romania'
-    city = 'Cluj-Napoca'
-
+    
     def process_item(self, item, spider):
         item = dict(item)
-        item['country'] = self.country
-        item['city'] = self.city
         if len(item['location'].strip()) == 0:
             item['location'] = '-'
         if len(item['description'].strip()) == 0:
             item['description'] = '-'
-        return item
-
-class InferLabels():
-
-    keywords = {
-        'music'
-    }
-
-    def process_item(self, item, spider):
-        item = dict(item)
-
         return item
 
 class CallApi():
